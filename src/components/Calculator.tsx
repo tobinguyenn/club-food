@@ -90,77 +90,75 @@ const Calculator: React.FC = () => {
   }, [userInputs]);
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-6 justify-end">
-          {/* Main calculator container */}
-          <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg space-y-6 border border-gray-200">
-            <h1 className="text-3xl font-bold text-center text-pink">Club Food</h1>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col lg:flex-row gap-6 justify-center items-center lg:items-start">
+        {/* Main calculator container */}
+        <div className="w-full max-w-[600px] p-4 sm:p-6 bg-white rounded-lg shadow-lg space-y-6 border border-gray-200">
+          <h1 className="text-3xl font-bold text-center text-pink">Club Food</h1>
 
-            {/* Rest of the calculator content */}
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-pink">Fee: </label>
-              <input
-                autoFocus
-                type="number"
-                value={fee ?? ''}
-                onChange={(e) => setFee(Number(e.target.value))}
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-pink focus:border-pink sm:text-sm"
-              />
-            </div>
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-pink">Discount: </label>
-              <input
-                type="number"
-                value={discount ?? ''}
-                onChange={(e) => setDiscount(Number(e.target.value))}
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-pink focus:border-pink sm:text-sm"
-              />
-            </div>
-            <hr />
-            {userInputs.map((input, index) => (
-              <UserInput
-                key={index}
-                value={input}
-                onChange={(value) => handleUserInputChange(index, value)}
-                onEnter={handleAddUserInput}
-                onRemove={() => handleRemoveUserInput(index)}
-                onDelete={() => handleRemoveUserInput(index)}
-                onNext={() => handleNavigateNext(index)}
-                onPrevious={() => handleNavigatePrevious(index)}
-                index={index}
-                totalInputs={userInputs.length}
-                shouldFocus={focusIndex === index}
-              />
-            ))}
-
-            {/* Add total sum display */}
-            {totalSum > 0 && <div className="text-right text-sm text-pink">Total: {totalSum.toLocaleString()}</div>}
-
-            <div className="flex space-x-4">
-              <button
-                onClick={handleReset}
-                className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-pink bg-white border-pink focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white-500"
-              >
-                Reset
-              </button>
-              <button
-                onClick={handleCalculate}
-                disabled={!isValid}
-                className={`w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white ${
-                  isValid ? 'bg-pink hover:bg-pink-400' : 'bg-gray-300 cursor-not-allowed'
-                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400`}
-              >
-                Calculate
-              </button>
-            </div>
-            <Results userInputs={userInputs} results={results} showResults={results.length > 0} />
+          {/* Rest of the calculator content */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium text-pink">Fee: </label>
+            <input
+              autoFocus
+              type="number"
+              value={fee ?? ''}
+              onChange={(e) => setFee(Number(e.target.value))}
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-pink focus:border-pink sm:text-sm"
+            />
           </div>
-
-          {/* Legends sidebar */}
-          <div className="block w-80 sticky top-8 h-fit">
-            <Legends />
+          <div className="space-y-4">
+            <label className="block text-sm font-medium text-pink">Discount: </label>
+            <input
+              type="number"
+              value={discount ?? ''}
+              onChange={(e) => setDiscount(Number(e.target.value))}
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-pink focus:border-pink sm:text-sm"
+            />
           </div>
+          <hr />
+          {userInputs.map((input, index) => (
+            <UserInput
+              key={index}
+              value={input}
+              onChange={(value) => handleUserInputChange(index, value)}
+              onEnter={handleAddUserInput}
+              onRemove={() => handleRemoveUserInput(index)}
+              onDelete={() => handleRemoveUserInput(index)}
+              onNext={() => handleNavigateNext(index)}
+              onPrevious={() => handleNavigatePrevious(index)}
+              index={index}
+              totalInputs={userInputs.length}
+              shouldFocus={focusIndex === index}
+            />
+          ))}
+
+          {/* Add total sum display */}
+          {totalSum > 0 && <div className="text-right text-sm text-pink">Total: {totalSum.toLocaleString()}</div>}
+
+          <div className="flex space-x-4">
+            <button
+              onClick={handleReset}
+              className="w-full inline-flex justify-center py-2 px-4 border shadow-sm text-sm font-medium rounded-lg text-pink bg-white border-pink focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white-500"
+            >
+              Reset
+            </button>
+            <button
+              onClick={handleCalculate}
+              disabled={!isValid}
+              className={`w-full inline-flex justify-center py-2 px-4 border shadow-sm text-sm font-medium rounded-lg text-white ${
+                isValid ? 'bg-pink hover:bg-pink-400' : 'bg-gray-300 cursor-not-allowed'
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400`}
+            >
+              Calculate
+            </button>
+          </div>
+          <Results userInputs={userInputs} results={results} showResults={results.length > 0} />
+        </div>
+
+        {/* Legends */}
+        <div className="w-full max-w-[320px] lg:sticky lg:top-8 lg:h-fit">
+          <Legends />
         </div>
       </div>
     </div>
