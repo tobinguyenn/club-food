@@ -68,6 +68,17 @@ const UserInput: React.FC<UserInputProps> = ({
     }
   };
 
+  const handleWheel = (e: React.WheelEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const input = e.currentTarget;
+    input.blur();
+    input.classList.add('wheel-active');
+    setTimeout(() => {
+      input.classList.remove('wheel-active');
+    }, 50);
+  };
+
   return (
     <div className="mb-4">
       <div className="flex flex-col space-y-2">
@@ -82,6 +93,7 @@ const UserInput: React.FC<UserInputProps> = ({
             min="0" // Prevent negative numbers
             value={value}
             onChange={handleChange}
+            onWheel={handleWheel}
             placeholder="Enter amount"
             onKeyDown={handleKeyDown}
             aria-label={`Amount input ${index + 1}`} // Accessibility

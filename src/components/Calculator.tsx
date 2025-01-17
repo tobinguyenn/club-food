@@ -12,8 +12,8 @@ const Calculator: React.FC = () => {
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
   const handleCalculate = useCallback(() => {
-    if (fee === null || discount === null) {
-      alert('Please enter fee and discount values');
+    if (fee === null) {
+      alert('Please enter fee value');
       return;
     }
 
@@ -23,20 +23,22 @@ const Calculator: React.FC = () => {
     }
 
     const validInputs = userInputs.map((input) => (typeof input === 'number' ? input : 0));
-    const calculatedResults = validInputs.map((input) => calculatePayment(input, fee, discount, validInputs));
+    const calculatedResults = validInputs.map((input) => calculatePayment(input, fee, discount || 0, validInputs));
     setResults(calculatedResults);
   }, [fee, discount, userInputs]);
 
   // Memoize validation state
   const isValid = useMemo(() => {
-    return fee !== null && discount !== null && userInputs.some((input) => input !== '');
-  }, [fee, discount, userInputs]);
+    return fee !== null && userInputs.some((input) => input !== '');
+  }, [fee, userInputs]);
 
   // Clean up effect
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() === 'c' && isValid) {
         handleCalculate();
+      } else if (e.key.toLowerCase() === 'r') {
+        handleReset();
       }
     };
 
@@ -45,24 +47,46 @@ const Calculator: React.FC = () => {
   }, [handleCalculate, isValid]);
 
   const handleUserInputChange = (index: number, value: number | '') => {
-    const newUserInputs = [...userInputs];
+    const newUserInputs: (number | '')[] = [...userInputs];
     newUserInputs[index] = value;
     setUserInputs(newUserInputs);
+
+    // Only auto-recalculate if results are showing AND we have a valid number input
+    if (results.length > 0 && fee !== null && typeof value === 'number') {
+      const validInputs = newUserInputs.map((input) => (typeof input === 'number' ? input : 0));
+      const calculatedResults = validInputs.map((input) => calculatePayment(input, fee, discount || 0, validInputs));
+      setResults(calculatedResults);
+    }
   };
 
   const handleAddUserInput = () => {
     const newIndex = userInputs.length;
-    setUserInputs([...userInputs, '']);
+    const newUserInputs: (number | '')[] = [...userInputs, ''];
+    setUserInputs(newUserInputs);
     setFocusIndex(newIndex);
+
+    // Auto-recalculate if results are showing
+    if (results.length > 0 && fee !== null) {
+      const validInputs = newUserInputs.map((input) => (typeof input === 'number' ? input : 0));
+      const calculatedResults = validInputs.map((input) => calculatePayment(input, fee, discount || 0, validInputs));
+      setResults(calculatedResults);
+    }
   };
 
   const handleRemoveUserInput = (index: number) => {
-    const newUserInputs = userInputs.filter((_, i) => i !== index);
+    const newUserInputs: (number | '')[] = userInputs.filter((_, i) => i !== index);
     setUserInputs(newUserInputs);
 
     // Focus on previous input after deletion
     const newFocusIndex = index === 0 ? 0 : index - 1;
     setFocusIndex(newFocusIndex);
+
+    // Auto-recalculate if results are showing
+    if (results.length > 0 && fee !== null) {
+      const validInputs = newUserInputs.map((input) => (typeof input === 'number' ? input : 0));
+      const calculatedResults = validInputs.map((input) => calculatePayment(input, fee, discount || 0, validInputs));
+      setResults(calculatedResults);
+    }
   };
 
   const handleReset = () => {
@@ -89,6 +113,21 @@ const Calculator: React.FC = () => {
     return validInputs.reduce((sum, curr) => sum + curr, 0);
   }, [userInputs]);
 
+  const hasValidInputs = useMemo(() => {
+    return userInputs.some((input) => typeof input === 'number' && input > 0);
+  }, [userInputs]);
+
+  const handleWheel = (e: React.WheelEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const input = e.currentTarget;
+    input.blur();
+    input.classList.add('wheel-active');
+    setTimeout(() => {
+      input.classList.remove('wheel-active');
+    }, 50);
+  };
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col lg:flex-row gap-6 justify-center lg:justify-end items-center lg:items-start">
@@ -104,19 +143,23 @@ const Calculator: React.FC = () => {
               type="number"
               value={fee ?? ''}
               onChange={(e) => setFee(Number(e.target.value))}
+              onWheel={handleWheel}
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-pink focus:border-pink sm:text-sm"
             />
           </div>
           <div className="space-y-4">
-            <label className="block text-sm font-medium text-pink">Discount: </label>
+            <label className="block text-sm font-medium text-pink">Discount (optional): </label>
             <input
               type="number"
               value={discount ?? ''}
               onChange={(e) => setDiscount(Number(e.target.value))}
+              onWheel={handleWheel}
+              placeholder="Enter discount amount"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-pink focus:border-pink sm:text-sm"
             />
           </div>
           <hr />
+          <p className="mt-4 font-semibold text-pink">Ordered Items</p>
           {userInputs.map((input, index) => (
             <UserInput
               key={index}
@@ -153,7 +196,7 @@ const Calculator: React.FC = () => {
               Calculate
             </button>
           </div>
-          <Results userInputs={userInputs} results={results} showResults={results.length > 0} />
+          <Results userInputs={userInputs} results={results} showResults={results.length > 0 && hasValidInputs} />
         </div>
 
         {/* Legends */}

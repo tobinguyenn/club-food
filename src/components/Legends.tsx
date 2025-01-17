@@ -11,7 +11,7 @@ const Legends: React.FC = () => {
 
   return (
     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 lg:sticky lg:top-8">
-      <h2 className="text-md font-medium text-pink mb-4">Keyboard Shortcuts</h2>
+      <h2 className="text-md font-medium text-pink mb-4">Ordered Items's Shortcuts</h2>
       <div className="grid gap-2">
         {shortcuts.map(({ key, description }) => (
           <div key={key} className="flex items-center text-sm">

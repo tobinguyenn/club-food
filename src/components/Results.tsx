@@ -9,6 +9,16 @@ interface ResultsProps {
 const Results: React.FC<ResultsProps> = ({ userInputs, results, showResults }) => {
   if (!showResults) return null;
 
+  const formatNumber = (value: number | '' | undefined): string => {
+    if (value === '' || value == null) return '-';
+    return value.toLocaleString();
+  };
+
+  // Only show rows with valid inputs
+  const validRows = userInputs
+    .map((input, index) => ({ input, result: results[index], index }))
+    .filter((row) => typeof row.input === 'number' && row.input > 0);
+
   return (
     <div className="mt-8">
       <hr className="mb-6 border-t border-gray-200" />
@@ -20,10 +30,10 @@ const Results: React.FC<ResultsProps> = ({ userInputs, results, showResults }) =
           </tr>
         </thead>
         <tbody>
-          {userInputs.map((input, index) => (
+          {validRows.map(({ input, result, index }) => (
             <tr key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-pink-50`}>
-              <td className="px-4 py-3 border-b border-gray-200">{input === '' ? '-' : input.toLocaleString()}</td>
-              <td className="px-4 py-3 border-b border-gray-200">{results[index].toLocaleString()}</td>
+              <td className="px-4 py-3 border-b border-gray-200">{formatNumber(input)}</td>
+              <td className="px-4 py-3 border-b border-gray-200">{formatNumber(result)}</td>
             </tr>
           ))}
         </tbody>

@@ -1,25 +1,16 @@
-export const calculatePayment = (input: number, fee: number, discount: number, userInputs: number[]): number => {
-  // Input validation
-  if (input < 0 || fee < 0 || discount < 0) {
-    return 0;
-  }
+export const calculatePayment = (amount: number, fee: number, discount: number, allAmounts: number[]): number => {
+  if (amount <= 0) return 0;
 
-  const sumInputs = userInputs.reduce((sum, current) => sum + current, 0);
+  const total = allAmounts.reduce((sum, curr) => sum + curr, 0);
 
-  // Guard against division by zero
-  if (sumInputs === 0) {
-    return 0;
-  }
+  // Following the Excel formula:
+  // amount - (discount * amount / total) + (fee * amount / total)
+  const result = amount - (discount * amount) / total + (fee * amount) / total;
 
-  // Ensure discount doesn't exceed total sum
-  const safeDiscount = Math.min(discount, sumInputs);
+  // Floor to nearest 1 first, then to nearest 1000
+  const flooredToOne = Math.floor(result);
+  const flooredToThousand = Math.floor(flooredToOne / 1000) * 1000;
 
-  // Calculate adjustments with safe values
-  const discountAdjustment = (safeDiscount * input) / sumInputs;
-  const feeAdjustment = (fee * input) / sumInputs;
-
-  // Prevent negative results
-  const result = Math.max(0, Math.floor((input - discountAdjustment + feeAdjustment) / 1000) * 1000);
-
-  return result;
+  // Return 0 if the result after flooring is 0
+  return flooredToThousand === 0 ? 0 : flooredToThousand;
 };
