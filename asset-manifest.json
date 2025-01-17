@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/club-food/static/css/main.31f4d1dd.css",
-    "main.js": "/club-food/static/js/main.d0ad91b7.js",
+    "main.css": "/club-food/static/css/main.33a6cedf.css",
+    "main.js": "/club-food/static/js/main.c0b5d967.js",
     "index.html": "/club-food/index.html"
   },
   "entrypoints": [
-    "static/css/main.31f4d1dd.css",
-    "static/js/main.d0ad91b7.js"
+    "static/css/main.33a6cedf.css",
+    "static/js/main.c0b5d967.js"
   ]
 }
