@@ -91,7 +91,7 @@ const Calculator: React.FC = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col lg:flex-row gap-6 justify-center items-center lg:items-start">
+      <div className="flex flex-col lg:flex-row gap-6 justify-center lg:justify-end items-center lg:items-start">
         {/* Main calculator container */}
         <div className="w-full max-w-[600px] p-4 sm:p-6 bg-white rounded-lg shadow-lg space-y-6 border border-gray-200">
           <h1 className="text-3xl font-bold text-center text-pink">Club Food</h1>
